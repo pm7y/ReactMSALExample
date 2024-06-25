@@ -1,5 +1,8 @@
 # Steps
 
+Register a new app in Entra Id
+https://learn.microsoft.com/en-us/entra/identity-platform/scenario-spa-app-registration
+
 Scaffold a new React/Typescript app.
 https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts
 
@@ -14,37 +17,39 @@ npm run dev
 Install the MSAL React package.
 
 ```
-npm install react react-dom
 npm install @azure/msal-react @azure/msal-browser
 ```
 
-# React + TypeScript + Vite
+https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/samples/msal-react-samples/typescript-sample/README.md
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Setup Entra Id App Registration
 
-Currently, two official plugins are available:
+To run the app you will need an Azure subscription so that you can create an Entra Id App Registration. You can either do that manually in the Azure portal or by using the Azure CLI and the following steps.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1. Install Azure CLI (if you haven't already): Follow the installation instructions for your operating system from the [official Azure CLI documentation](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli).
 
-## Expanding the ESLint configuration
+2. Sign in to Azure
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: "latest",
-    sourceType: "module",
-    project: ["./tsconfig.json", "./tsconfig.node.json"],
-    tsconfigRootDir: __dirname,
-  },
-};
+```
+az login --tenant "your-tenant-id"
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+3. Create the app registration and note the "appId" (client Id) and "id" (object id) that is output in the json:
+
+```
+az ad app create --display-name "YourAppName" --sign-in-audience "AzureADMultipleOrgs"
+```
+
+4. Add a SPA redirect URI, replace <your-app-object-id> in the following command with the "id" from step 3:
+
+```
+az rest --method PATCH --uri 'https://graph.microsoft.com/v1.0/applications/<your-app-object-id>' --headers 'Content-Type=application/json' --body {"spa":{"redirectUris":["http://localhost:5173/"]}}'
+```
+
+5. Add Microsoft Graph API permissions, replace your-app-client-id in the following command with the "appId" from step 3:
+
+```
+az ad app permission add --id "your-app-client-id" --api 00000003-0000-0000-c000-000000000000 --api-permissions 311a71cc-e848-46a1-bdf8-97ff7156d8e6=Scope
+```
+
+6. Edit authConfig.ts and replace the clientId with the "appId" from step 3. You should now be able to run the app and login.
