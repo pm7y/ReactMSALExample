@@ -1,3 +1,93 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  font-family: 'Open Sans Variable', Inter, system-ui, Helvetica, Arial, sans-serif;
+  color-scheme: light dark;
+}
+
+html {
+  padding-right: 0px !important;
+}
+
+@layer base {
+  body {
+    @apply always-show-scrollbar custom-scrollbar flex w-full justify-center overflow-x-hidden bg-stone-600 px-4 text-lg text-blue-900 dark:bg-zinc-900 dark:text-zinc-100;
+
+    #root {
+      @apply min-w-[320px] max-w-[960px];
+    }
+  }
+
+  a {
+    @apply text-blue-800 underline visited:text-blue-800 hover:text-blue-950 visited:hover:text-blue-950 dark:text-stone-200 dark:visited:text-gray-200 dark:hover:text-gray-300 dark:visited:hover:text-gray-300;
+  }
+
+  nav,
+  footer {
+    a {
+      @apply !text-stone-200 active:!text-stone-300;
+    }
+  }
+
+  h1 {
+    @apply text-4xl;
+    @apply font-thin;
+  }
+
+  h2 {
+    @apply text-2xl;
+    @apply font-thin;
+    @apply my-6;
+    @apply leading-tight;
+  }
+
+  p {
+    @apply mb-4;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  .spinner {
+    border: 6px solid white;
+    border-top: 6px solid black;
+    border-radius: 50%;
+    width: 100%;
+    aspect-ratio: 1;
+    animation: spin 1s ease-in-out infinite;
+  }
+}
+
+@layer components {
+  .always-show-scrollbar {
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: gray;
+  }
+}
