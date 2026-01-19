@@ -1,13 +1,23 @@
 import { BrowserCacheLocation, Configuration, LogLevel } from '@azure/msal-browser';
 
+function getRequiredEnvVar(name: string): string {
+  const value = import.meta.env[name];
+  if (!value || typeof value !== 'string') {
+    throw new Error(
+      `Missing required environment variable: ${name}. Please set this value in the .env file.`,
+    );
+  }
+  return value;
+}
+
 /*
  Config object to be passed to Msal on creation.
  https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/configuration.md
  */
 export const msalConfig: Configuration = {
   auth: {
-    clientId: import.meta.env.VITE_MSAL_CLIENT_ID as string, // Set this value in the .env file.
-    authority: 'https://login.microsoftonline.com/common/oauth2/v2.0',
+    clientId: getRequiredEnvVar('VITE_MSAL_CLIENT_ID'),
+    authority: 'https://login.microsoftonline.com/common',
     redirectUri: '/', // You must register this URI on Azure Portal/App Registration.
     navigateToLoginRequestUrl: true,
     protocolMode: 'AAD', // "AAD" for Entra
@@ -46,10 +56,10 @@ export const msalConfig: Configuration = {
   },
 };
 
-export const loginRequest = {
+export const loginRequest: Readonly<{ scopes: readonly string[] }> = {
   /*
   For demo purpose, we're calling the Microsoft Graph API so we use it's default scope.
   This will be different depending on the API you want to call.
   */
   scopes: ['https://graph.microsoft.com/.default'],
-};
+} as const;

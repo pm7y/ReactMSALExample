@@ -1,13 +1,11 @@
 import { createRootRoute, createRoute } from '@tanstack/react-router';
-import Claims from './features/Claims.tsx';
-import MsGraph from './features/MsGraph.tsx';
+import { Claims } from './features/Claims.tsx';
+import { MsGraph } from './features/MsGraph.tsx';
 import { Shell } from './features/Shell.tsx';
-import Index from './features/Welcome.tsx';
+import { Welcome } from './features/Welcome.tsx';
 
 const rootRoute = createRootRoute({
-  component: () => {
-    return <Shell />;
-  },
+  component: Shell,
 });
 
 export function getRoutes() {
@@ -15,17 +13,17 @@ export function getRoutes() {
     createRoute({
       getParentRoute: () => rootRoute,
       path: '/',
-      component: () => <Index />,
+      component: Welcome,
     }),
     createRoute({
       getParentRoute: () => rootRoute,
       path: '/claims',
-      component: () => <Claims />,
+      component: Claims,
     }),
     createRoute({
       getParentRoute: () => rootRoute,
       path: '/msgraph',
-      component: () => <MsGraph />,
+      component: MsGraph,
     }),
   ];
 

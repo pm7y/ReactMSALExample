@@ -1,31 +1,35 @@
-import { EndSessionRequest, InteractionStatus } from '@azure/msal-browser';
+import { InteractionStatus } from '@azure/msal-browser';
 import { useMsal } from '@azure/msal-react';
-import { loginRequest } from '../infrastructure/auth/authConfig';
+import { useActiveAccount } from '../infrastructure/auth/useActiveAccount';
 import { Button } from './Button';
 
-export const LogoutButton = () => {
+export function LogoutButton() {
   const { instance, inProgress } = useMsal();
-  const accounts = instance.getAllAccounts();
-  const account = accounts ? accounts[0] : null;
-  const currentMsalOperationInProgress = inProgress;
+  const account = useActiveAccount();
 
   return (
     <Button
-      disabled={currentMsalOperationInProgress !== InteractionStatus.None}
+      variant="ghost"
+      disabled={inProgress !== InteractionStatus.None}
       onClick={async () => {
         try {
           await instance.logoutRedirect({
-            ...loginRequest,
             account: account,
             logoutHint: account?.username,
-          } as EndSessionRequest);
+          });
         } catch (redirectError) {
-          // TODO handle this error
           console.error('logout error', redirectError);
           throw redirectError;
         }
       }}>
-      Log out
+      <svg className="size-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15"
+        />
+      </svg>
+      <span>Log out</span>
     </Button>
   );
-};
+}

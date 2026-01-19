@@ -12,12 +12,17 @@ export class CustomNavigationClient extends NavigationClient {
   async navigateInternal(url: string, options: NavigationOptions): Promise<boolean> {
     const relativePath = url.replace(window.location.origin, '');
 
-    console.debug('CustomNavigationClient navigating to: ', relativePath, options);
-
-    if (options.noHistory) {
-      await this.router.navigate({ replace: true, to: relativePath });
-    } else {
-      await this.router.navigate({ to: relativePath });
+    try {
+      if (options.noHistory) {
+        await this.router.navigate({ replace: true, to: relativePath });
+      } else {
+        await this.router.navigate({ to: relativePath });
+      }
+    } catch (error) {
+      // Log navigation errors but don't throw - fall back to default navigation
+      console.error('Router navigation failed:', error);
+      // Return true to indicate MSAL should use its default navigation
+      return true;
     }
 
     return false;

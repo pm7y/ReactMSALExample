@@ -1,5 +1,7 @@
 import { CopyButton } from './CopyButton';
 
+const DotIndicator = () => <span className="dot-indicator" />;
+
 export function CodeBox({
   code,
   copyValue,
@@ -12,13 +14,18 @@ export function CodeBox({
   const copyText = copyValue ?? code;
 
   return (
-    <div className="my-6 rounded-2xl bg-stone-200 px-4 pb-4 pt-2 dark:bg-stone-900">
-      {copyText && (
-        <div className="flex justify-end">
-          <CopyButton value={copyText} label={copyLabel ?? 'Copy'} />
+    <div className="group border-theme bg-surface relative my-6 overflow-hidden rounded-lg border dark:bg-[var(--color-void)]">
+      <div className="border-theme bg-surface-elevated flex items-center justify-between border-b px-4 py-2 dark:bg-[var(--color-charcoal)]">
+        <div className="flex items-center gap-2">
+          <DotIndicator />
+          <DotIndicator />
+          <DotIndicator />
         </div>
-      )}
-      <pre className="custom-scrollbar overflow-x-auto pb-4 text-sm">{code}</pre>
+        {copyText && <CopyButton value={copyText} label={copyLabel ?? 'Copy'} />}
+      </div>
+      <pre className="custom-scrollbar text-primary overflow-x-auto p-4 text-sm leading-relaxed">
+        {code}
+      </pre>
     </div>
   );
 }

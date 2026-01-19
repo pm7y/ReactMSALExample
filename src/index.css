@@ -1,93 +1,511 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-:root {
-  font-family: 'Open Sans Variable', Inter, system-ui, Helvetica, Arial, sans-serif;
-  color-scheme: light dark;
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * ELECTRIC MONOCHROME THEME - January 2026
+ * A refined, developer-focused aesthetic with electric lime accents
+ */
+
+@theme {
+  /* Core palette */
+  --color-void: #0a0a0f;
+  --color-charcoal: #141418;
+  --color-graphite: #1c1c22;
+  --color-slate: #2a2a33;
+  --color-ash: #3d3d4a;
+  --color-mist: #6b6b7a;
+  --color-cloud: #9898a8;
+  --color-snow: #e8e8ed;
+  --color-white: #fafafa;
+
+  /* Signal color - the electric accent */
+  --color-signal: #c8ff00;
+  --color-signal-dim: #9acc00;
+  --color-signal-glow: rgba(200, 255, 0, 0.15);
+
+  /* Light theme palette */
+  --color-light-bg: #f5f5f7;
+  --color-light-surface: #ffffff;
+  --color-light-surface-elevated: #fafafa;
+  --color-light-border: #d8d8de;
+  --color-light-text: #1a1a1f;
+  --color-light-text-secondary: #4a4a55;
+  --color-light-muted: #6b6b7a;
+  --color-light-accent: #7a9900;
+  --color-light-accent-hover: #5c7300;
+
+  /* Typography */
+  --font-display: 'Outfit Variable', 'Outfit', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Spacing rhythm */
+  --space-unit: 0.25rem;
+
+  /* Transitions */
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-snap: cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
-html {
-  padding-right: 0px !important;
+/* Border color compatibility */
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-light-border);
+  }
+
+  .dark *,
+  .dark ::after,
+  .dark ::before,
+  .dark ::backdrop,
+  .dark ::file-selector-button {
+    border-color: var(--color-slate);
+  }
+}
+
+/* Custom utilities */
+@utility always-show-scrollbar {
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+}
+
+@utility custom-scrollbar {
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-ash);
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--color-signal);
+  }
+}
+
+@utility noise-overlay {
+  position: relative;
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+@utility signal-glow {
+  box-shadow:
+    0 0 20px var(--color-signal-glow),
+    0 0 40px var(--color-signal-glow);
+}
+
+@utility signal-border {
+  border-color: var(--color-signal);
+}
+
+@utility signal-text {
+  color: var(--color-signal);
+}
+
+/* Theme-aware color utilities */
+@utility text-muted {
+  color: var(--color-light-muted);
+  .dark & {
+    color: var(--color-mist);
+  }
+}
+
+@utility text-accent {
+  color: var(--color-light-accent);
+  .dark & {
+    color: var(--color-signal);
+  }
+}
+
+@utility text-secondary {
+  color: var(--color-light-text-secondary);
+  .dark & {
+    color: var(--color-cloud);
+  }
+}
+
+@utility text-primary {
+  color: var(--color-light-text);
+  .dark & {
+    color: var(--color-snow);
+  }
+}
+
+@utility border-theme {
+  border-color: var(--color-light-border);
+  .dark & {
+    border-color: var(--color-slate);
+  }
+}
+
+@utility bg-surface {
+  background-color: var(--color-light-surface);
+  .dark & {
+    background-color: var(--color-charcoal);
+  }
+}
+
+@utility bg-surface-elevated {
+  background-color: var(--color-light-surface-elevated);
+  .dark & {
+    background-color: var(--color-graphite);
+  }
+}
+
+@utility bg-base {
+  background-color: var(--color-light-bg);
+  .dark & {
+    background-color: var(--color-void);
+  }
+}
+
+/* Theme-aware hover utilities */
+@utility hover-text-accent {
+  &:hover {
+    color: var(--color-light-accent);
+  }
+  .dark &:hover {
+    color: var(--color-signal);
+  }
+}
+
+@utility hover-text-primary {
+  &:hover {
+    color: var(--color-light-text);
+  }
+  .dark &:hover {
+    color: var(--color-snow);
+  }
+}
+
+@utility hover-border-accent {
+  &:hover {
+    border-color: var(--color-light-accent);
+  }
+  .dark &:hover {
+    border-color: var(--color-signal);
+  }
+}
+
+/* Dot indicator styling for code boxes */
+@utility dot-indicator {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 9999px;
+  background-color: var(--color-light-border);
+  .dark & {
+    background-color: var(--color-ash);
+  }
+}
+
+/* Icon container utility */
+@utility icon-container-accent {
+  display: flex;
+  width: 2.5rem;
+  height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  background-color: color-mix(in srgb, var(--color-light-accent) 10%, transparent);
+  .dark & {
+    background-color: color-mix(in srgb, var(--color-signal) 10%, transparent);
+  }
+}
+
+/* Vertical divider */
+@utility divider-vertical {
+  height: 1rem;
+  width: 1px;
+  background-color: var(--color-light-border);
+  .dark & {
+    background-color: var(--color-slate);
+  }
+}
+
+/* Root and body styles */
+@layer utilities {
+  :root {
+    font-family: var(--font-mono);
+    color-scheme: light dark;
+    font-feature-settings:
+      'liga' 1,
+      'calt' 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /*
+   * Override padding-right added by modal/dialog libraries (e.g., HeadlessUI, Radix)
+   * that compensate for scrollbar width when body scroll is locked.
+   * This prevents layout shift since we use scrollbar-gutter: stable on body.
+   */
+  html {
+    padding-right: 0px !important;
+  }
 }
 
 @layer base {
   body {
-    @apply always-show-scrollbar custom-scrollbar flex w-full justify-center overflow-x-hidden bg-stone-600 px-4 text-lg text-blue-900 dark:bg-zinc-900 dark:text-zinc-100;
-
-    #root {
-      @apply min-w-[320px] max-w-[960px];
-    }
+    @apply always-show-scrollbar custom-scrollbar flex w-full justify-center overflow-x-hidden px-4 text-base;
+    background-color: var(--color-light-bg);
+    color: var(--color-light-text);
+    font-family: var(--font-mono);
+    line-height: 1.7;
+    letter-spacing: -0.01em;
   }
 
+  /* Root container constraints - separate rule for clearer specificity */
+  #root {
+    @apply w-full max-w-[1000px] min-w-[320px];
+  }
+
+  /* Dark mode body */
+  .dark body {
+    background-color: var(--color-void);
+    color: var(--color-cloud);
+  }
+
+  /* Links - light mode default */
   a {
-    @apply text-blue-800 underline visited:text-blue-800 hover:text-blue-950 visited:hover:text-blue-950 dark:text-stone-200 dark:visited:text-gray-200 dark:hover:text-gray-300 dark:visited:hover:text-gray-300;
-  }
+    color: var(--color-light-accent);
+    text-decoration: none;
+    transition: all 0.2s var(--ease-smooth);
+    border-bottom: 1px solid transparent;
 
-  nav,
-  footer {
-    a {
-      @apply !text-stone-200 active:!text-stone-300;
+    &:hover {
+      color: var(--color-light-accent-hover);
+      border-bottom-color: var(--color-light-accent);
+    }
+
+    &:visited {
+      color: var(--color-light-accent-hover);
     }
   }
 
+  .dark a {
+    color: var(--color-signal);
+
+    &:hover {
+      color: var(--color-signal);
+      border-bottom-color: var(--color-signal);
+    }
+
+    &:visited {
+      color: var(--color-signal-dim);
+    }
+  }
+
+  /* Navigation links - no border effect */
+  nav a,
+  footer a {
+    color: var(--color-light-muted);
+    border-bottom: none;
+
+    &:hover {
+      color: var(--color-light-accent);
+      border-bottom: none;
+    }
+
+    &:visited {
+      color: var(--color-light-muted);
+    }
+  }
+
+  .dark nav a,
+  .dark footer a {
+    color: var(--color-cloud);
+
+    &:hover {
+      color: var(--color-signal);
+    }
+
+    &:visited {
+      color: var(--color-cloud);
+    }
+  }
+
+  /* Typography - light mode default */
   h1 {
-    @apply text-4xl;
-    @apply font-thin;
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    color: var(--color-light-text);
+  }
+
+  .dark h1 {
+    color: var(--color-snow);
   }
 
   h2 {
-    @apply text-2xl;
-    @apply font-thin;
-    @apply my-6;
-    @apply leading-tight;
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+    margin: 1.5rem 0 1rem;
+    color: var(--color-light-text);
+  }
+
+  .dark h2 {
+    color: var(--color-snow);
+  }
+
+  h3 {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 1rem 0 0.5rem;
+    color: var(--color-light-text-secondary);
+  }
+
+  .dark h3 {
+    color: var(--color-cloud);
   }
 
   p {
-    @apply mb-4;
+    margin-bottom: 1rem;
   }
 
+  strong,
+  b {
+    color: var(--color-light-accent);
+    font-weight: 600;
+  }
+
+  .dark strong,
+  .dark b {
+    color: var(--color-signal);
+  }
+
+  /* Code/pre elements */
+  code,
+  pre {
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+  }
+
+  pre {
+    background-color: var(--color-light-surface);
+    border: 1px solid var(--color-light-border);
+    border-radius: 8px;
+    padding: 1rem;
+    overflow-x: auto;
+  }
+
+  .dark pre {
+    background-color: var(--color-charcoal);
+    border-color: var(--color-slate);
+  }
+
+  /* Lists */
+  ul,
+  ol {
+    padding-left: 1.5rem;
+  }
+
+  li {
+    margin-bottom: 0.5rem;
+  }
+
+  li::marker {
+    color: var(--color-light-accent);
+  }
+
+  .dark li::marker {
+    color: var(--color-signal);
+  }
+
+  /* Spinner animation */
   @keyframes spin {
-    0% {
+    from {
       transform: rotate(0deg);
     }
-    100% {
+    to {
       transform: rotate(360deg);
     }
   }
+
+  @keyframes pulse-glow {
+    0%,
+    100% {
+      box-shadow: 0 0 20px var(--color-signal-glow);
+    }
+    50% {
+      box-shadow:
+        0 0 40px var(--color-signal-glow),
+        0 0 60px var(--color-signal-glow);
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   .spinner {
-    border: 6px solid white;
-    border-top: 6px solid black;
+    width: 48px;
+    height: 48px;
+    border: 3px solid var(--color-light-border);
+    border-top-color: var(--color-light-accent);
     border-radius: 50%;
-    width: 100%;
-    aspect-ratio: 1;
-    animation: spin 1s ease-in-out infinite;
+    animation: spin 0.8s linear infinite;
+  }
+
+  .dark .spinner {
+    border-color: var(--color-slate);
+    border-top-color: var(--color-signal);
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.4s var(--ease-smooth) forwards;
   }
 }
 
-@layer components {
-  .always-show-scrollbar {
-    overflow-y: scroll;
-    scrollbar-gutter: stable;
+/* Selection styling */
+::selection {
+  background-color: var(--color-signal);
+  color: var(--color-void);
+}
+
+/* Focus styles */
+:focus-visible {
+  outline: 2px solid var(--color-signal);
+  outline-offset: 2px;
+}
+
+/* Light mode scrollbar */
+@utility custom-scrollbar-light {
+  &::-webkit-scrollbar-thumb {
+    background: var(--color-light-border);
   }
 
-  .custom-scrollbar::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #ccc;
-    border-radius: 4px;
-    border: 2px solid transparent;
-    background-clip: content-box;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: gray;
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--color-light-accent);
   }
 }

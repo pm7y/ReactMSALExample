@@ -1,14 +1,13 @@
 import { ReactNode } from 'react';
 
-export const Page = ({ header, content }: { header: ReactNode; content: ReactNode }) => {
+export function Page({ header, content }: { header: ReactNode; content: ReactNode }) {
   return (
-    <>
-      <header className="-mb-2 rounded-t-xl bg-stone-200 px-8 pb-8 pt-6 dark:bg-zinc-800">
-        {header}
+    <article className="animate-fade-in">
+      <header className="relative mb-6">
+        <div className="absolute top-0 -left-4 h-full w-1 bg-[var(--color-signal)]" />
+        <div className="pl-4">{header}</div>
       </header>
-      <section className="-mx-0 rounded-xl border-2 border-stone-200 bg-stone-50 p-8 dark:border-zinc-800 dark:bg-zinc-600">
-        {content}
-      </section>
-    </>
+      <section className="border-theme bg-surface rounded-lg border p-6 sm:p-8">{content}</section>
+    </article>
   );
-};
+}

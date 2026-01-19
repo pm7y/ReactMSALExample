@@ -1,4 +1,34 @@
-# Steps
+# React MSAL Reference Implementation
+
+A modern React application demonstrating Microsoft Authentication Library (MSAL) integration with Azure Entra ID.
+
+## Tech Stack
+
+| Package                | Version |
+| ---------------------- | ------- |
+| React                  | 19.x    |
+| @azure/msal-browser    | 4.x     |
+| @azure/msal-react      | 3.x     |
+| @tanstack/react-router | 1.151.x |
+| Vite                   | 7.x     |
+| Tailwind CSS           | 4.x     |
+| TypeScript             | 5.8.x   |
+| ESLint                 | 9.x     |
+
+## Quick Start
+
+```bash
+# Clone and install
+npm install
+
+# Create .env file with your Azure AD client ID
+echo "VITE_MSAL_CLIENT_ID=your-client-id" > .env
+
+# Start development server
+npm run dev
+```
+
+## Steps
 
 Register a new app in Entra Id
 https://learn.microsoft.com/en-us/entra/identity-platform/scenario-spa-app-registration
@@ -17,7 +47,7 @@ npm run dev
 Install the MSAL React package.
 
 ```
-npm install @azure/msal-react @azure/msal-browser
+npm install @azure/msal-react@^3 @azure/msal-browser@^4
 ```
 
 https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/samples/msal-react-samples/typescript-sample/README.md

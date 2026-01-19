@@ -1,10 +1,11 @@
 import { createStandardPublicClientApplication } from '@azure/msal-browser';
 import { MsalProvider } from '@azure/msal-react';
-import '@fontsource-variable/open-sans';
+import '@fontsource-variable/jetbrains-mono';
+import '@fontsource-variable/outfit';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { CustomNavigationClient } from './CustomNavigationClient.tsx';
+import { CustomNavigationClient } from './infrastructure/auth/CustomNavigationClient.tsx';
 import './index.css';
 import { AccessTokenProvider } from './infrastructure/auth/AccessTokenProvider.tsx';
 import { msalConfig } from './infrastructure/auth/authConfig.ts';
@@ -29,28 +30,57 @@ await createStandardPublicClientApplication(msalConfig)
     // Must set the navigation client before calling handleRedirectPromise
     pca.setNavigationClient(navigationClient);
 
-    pca.handleRedirectPromise().then((authResult) => {
-      if (authResult?.account) {
-        pca.setActiveAccount(authResult.account);
-      }
-    });
-
-    ReactDOM.createRoot(document.getElementById('root')!).render(
-      <React.StrictMode>
-        <MsalProvider instance={pca}>
-          <AccessTokenProvider>
-            <RouterProvider router={router} />
-          </AccessTokenProvider>
-        </MsalProvider>
-      </React.StrictMode>,
-    );
+    pca
+      .handleRedirectPromise()
+      .then((authResult) => {
+        if (authResult?.account) {
+          pca.setActiveAccount(authResult.account);
+        } else if (!pca.getActiveAccount()) {
+          // No redirect result and no active account set - use first cached account if available
+          const accounts = pca.getAllAccounts();
+          if (accounts.length > 0) {
+            pca.setActiveAccount(accounts[0]);
+          }
+        }
+        ReactDOM.createRoot(document.getElementById('root')!).render(
+          <React.StrictMode>
+            <MsalProvider instance={pca}>
+              <AccessTokenProvider>
+                <RouterProvider router={router} />
+              </AccessTokenProvider>
+            </MsalProvider>
+          </React.StrictMode>,
+        );
+      })
+      .catch((error) => {
+        console.error('handleRedirectPromise error:', error);
+        const errorMessage =
+          error instanceof Error ? error.message : 'Authentication redirect failed';
+        ReactDOM.createRoot(document.getElementById('root')!).render(
+          <>
+            <h1>Authentication Error</h1>
+            <p>There was a problem completing the authentication process.</p>
+            <p>
+              <strong>Error:</strong> {errorMessage}
+            </p>
+            <p>
+              <a href="/">Try again</a>
+            </p>
+          </>,
+        );
+      });
   })
   .catch((unknownError: unknown) => {
-    console.error('Error intialising application', unknownError);
+    console.error('Error initialising application', unknownError);
+    const errorMessage = unknownError instanceof Error ? unknownError.message : 'Unknown error';
     ReactDOM.createRoot(document.getElementById('root')!).render(
       <>
-        <h1>Oops, Something went wrong 😭</h1>
+        <h1>Application Error</h1>
         <p>The app could not be initialised.</p>
+        <p>
+          <strong>Error:</strong> {errorMessage}
+        </p>
+        <p>Please check the console for more details or try refreshing the page.</p>
       </>,
     );
   });

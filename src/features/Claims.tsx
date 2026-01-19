@@ -4,7 +4,39 @@ import { useAccessToken } from '../infrastructure/auth/useAccessToken';
 import { decodeToken } from '../infrastructure/auth/utils';
 import { Page } from './Page';
 
-function Claims() {
+function AccessTokenContent({
+  decodedAccessToken,
+  accessToken,
+}: {
+  decodedAccessToken: ReturnType<typeof decodeToken>;
+  accessToken: string | null;
+}) {
+  if (decodedAccessToken) {
+    return (
+      <CodeBox
+        code={JSON.stringify(decodedAccessToken, null, 2)}
+        copyValue={accessToken}
+        copyLabel={'Copy Access Token'}
+      />
+    );
+  }
+
+  if (accessToken) {
+    return (
+      <div>
+        <p>
+          This access token is opaque (encrypted) and cannot be decoded client-side. Microsoft Graph
+          access tokens are often issued in this format. The token is still valid for API calls.
+        </p>
+        <CodeBox code={accessToken} copyValue={accessToken} copyLabel={'Copy Access Token'} />
+      </div>
+    );
+  }
+
+  return null;
+}
+
+export function Claims() {
   const account = useAccount();
   const accessToken = useAccessToken();
 
@@ -21,7 +53,7 @@ function Claims() {
             information and debugging purposes.
           </p>
           <UnauthenticatedTemplate>
-            <div>✋ You must be logged in to see this content.</div>
+            <div>You must be logged in to see this content.</div>
           </UnauthenticatedTemplate>
           <AuthenticatedTemplate>
             <>
@@ -42,13 +74,10 @@ function Claims() {
                 An access token is used to authorise access to protected resources or APIs. It tells
                 the resource server what the client application is allowed to do.
               </p>
-              {decodedAccessToken && (
-                <CodeBox
-                  code={JSON.stringify(decodedAccessToken, null, 2)}
-                  copyValue={accessToken}
-                  copyLabel={'Copy Access Token'}
-                />
-              )}
+              <AccessTokenContent
+                decodedAccessToken={decodedAccessToken}
+                accessToken={accessToken}
+              />
             </>
           </AuthenticatedTemplate>
         </>
@@ -56,5 +85,3 @@ function Claims() {
     />
   );
 }
-
-export default Claims;

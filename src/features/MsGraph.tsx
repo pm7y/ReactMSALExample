@@ -4,7 +4,25 @@ import { CodeBox } from '../components/CodeBox';
 import { Spinner } from '../components/Spinner';
 import { Page } from './Page';
 
-function MsGraph() {
+function UserDataContent({
+  isLoading,
+  user,
+}: {
+  isLoading: boolean;
+  user: ReturnType<typeof useGraphUserDetails>['user'];
+}) {
+  if (isLoading) {
+    return <Spinner />;
+  }
+
+  if (user) {
+    return <CodeBox code={JSON.stringify(user, null, 2)} />;
+  }
+
+  return <div>User details could not be retrieved</div>;
+}
+
+export function MsGraph() {
   const { user, isLoading } = useGraphUserDetails();
 
   return (
@@ -24,7 +42,7 @@ function MsGraph() {
             to retrieve some profile data about the user including their photo if there is one.
           </p>
           <UnauthenticatedTemplate>
-            <div>✋ You must be logged in to see this content.</div>
+            <div>You must be logged in to see this content.</div>
           </UnauthenticatedTemplate>
           <AuthenticatedTemplate>
             <p>
@@ -35,20 +53,10 @@ function MsGraph() {
               </i>
               .
             </p>
-            {isLoading ? (
-              <Spinner />
-            ) : user ? (
-              <>
-                <CodeBox code={JSON.stringify(user, null, 2)} />
-              </>
-            ) : (
-              <div>User details could not be retrieved 🫤</div>
-            )}
+            <UserDataContent isLoading={isLoading} user={user} />
           </AuthenticatedTemplate>
         </>
       }
     />
   );
 }
-
-export default MsGraph;
