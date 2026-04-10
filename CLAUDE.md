@@ -9,6 +9,8 @@ npm run dev       # Start development server (http://localhost:5173)
 npm run build     # TypeScript check + Vite build
 npm run lint      # ESLint with zero warnings allowed
 npm run format    # Prettier formatting
+npm test          # Run Vitest once
+npm run test:watch # Run Vitest in watch mode
 ```
 
 ## Environment Setup
