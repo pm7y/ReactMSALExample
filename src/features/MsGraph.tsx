@@ -7,12 +7,18 @@ import { Page } from './Page';
 function UserDataContent({
   isLoading,
   user,
+  error,
 }: {
   isLoading: boolean;
   user: ReturnType<typeof useGraphUserDetails>['user'];
+  error: string | undefined;
 }) {
   if (isLoading) {
     return <Spinner />;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
   }
 
   if (user) {
@@ -23,7 +29,7 @@ function UserDataContent({
 }
 
 export function MsGraph() {
-  const { user, isLoading } = useGraphUserDetails();
+  const { user, isLoading, error } = useGraphUserDetails();
 
   return (
     <Page
@@ -53,7 +59,7 @@ export function MsGraph() {
               </i>
               .
             </p>
-            <UserDataContent isLoading={isLoading} user={user} />
+            <UserDataContent isLoading={isLoading} user={user} error={error} />
           </AuthenticatedTemplate>
         </>
       }

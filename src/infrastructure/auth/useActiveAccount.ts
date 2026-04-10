@@ -1,13 +1,9 @@
 import { AccountInfo } from '@azure/msal-browser';
-import { useMsal } from '@azure/msal-react';
+import { useAccount } from '@azure/msal-react';
 
-/**
- * Custom hook that retrieves the active account from the MSAL instance.
- * Uses getActiveAccount() to respect the account set by setActiveAccount().
- *
- * @returns The active account if available, otherwise null
- */
+// Wraps msal-react's useAccount() — called with no identifiers it tracks the active account
+// reactively via MSAL event callbacks, so consumers re-render on login, logout, and
+// setActiveAccount. Calling instance.getActiveAccount() directly in render is not reactive.
 export function useActiveAccount(): AccountInfo | null {
-  const { instance } = useMsal();
-  return instance.getActiveAccount();
+  return useAccount();
 }

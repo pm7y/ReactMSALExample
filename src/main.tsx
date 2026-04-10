@@ -5,6 +5,8 @@ import '@fontsource-variable/outfit';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+
+const root = ReactDOM.createRoot(document.getElementById('root')!);
 import { CustomNavigationClient } from './infrastructure/auth/CustomNavigationClient.tsx';
 import './index.css';
 import { AccessTokenProvider } from './infrastructure/auth/AccessTokenProvider.tsx';
@@ -31,7 +33,7 @@ await createStandardPublicClientApplication(msalConfig)
     pca.setNavigationClient(navigationClient);
 
     pca
-      .handleRedirectPromise()
+      .handleRedirectPromise({ navigateToLoginRequestUrl: true })
       .then((authResult) => {
         if (authResult?.account) {
           pca.setActiveAccount(authResult.account);
@@ -42,7 +44,7 @@ await createStandardPublicClientApplication(msalConfig)
             pca.setActiveAccount(accounts[0]);
           }
         }
-        ReactDOM.createRoot(document.getElementById('root')!).render(
+        root.render(
           <React.StrictMode>
             <MsalProvider instance={pca}>
               <AccessTokenProvider>
@@ -56,7 +58,7 @@ await createStandardPublicClientApplication(msalConfig)
         console.error('handleRedirectPromise error:', error);
         const errorMessage =
           error instanceof Error ? error.message : 'Authentication redirect failed';
-        ReactDOM.createRoot(document.getElementById('root')!).render(
+        root.render(
           <>
             <h1>Authentication Error</h1>
             <p>There was a problem completing the authentication process.</p>
@@ -73,7 +75,7 @@ await createStandardPublicClientApplication(msalConfig)
   .catch((unknownError: unknown) => {
     console.error('Error initialising application', unknownError);
     const errorMessage = unknownError instanceof Error ? unknownError.message : 'Unknown error';
-    ReactDOM.createRoot(document.getElementById('root')!).render(
+    root.render(
       <>
         <h1>Application Error</h1>
         <p>The app could not be initialised.</p>

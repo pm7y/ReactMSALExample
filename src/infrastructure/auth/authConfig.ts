@@ -18,9 +18,10 @@ export const msalConfig: Configuration = {
   auth: {
     clientId: getRequiredEnvVar('VITE_MSAL_CLIENT_ID'),
     authority: 'https://login.microsoftonline.com/common',
-    redirectUri: '/', // You must register this URI on Azure Portal/App Registration.
-    navigateToLoginRequestUrl: true,
-    protocolMode: 'AAD', // "AAD" for Entra
+    // Must be registered in Azure Portal/App Registration.
+    // Note: MSAL Browser v5 introduces a redirect bridge page for popup flows.
+    // If upgrading to v5, see: https://learn.microsoft.com/entra/msal/javascript/browser/redirect-bridge
+    redirectUri: '/',
   },
   cache: {
     /*
@@ -30,6 +31,7 @@ export const msalConfig: Configuration = {
     cacheLocation: BrowserCacheLocation.LocalStorage,
   },
   system: {
+    protocolMode: 'AAD', // "AAD" for Entra ID
     loggerOptions: {
       logLevel: LogLevel.Warning,
       piiLoggingEnabled: false,
@@ -58,8 +60,9 @@ export const msalConfig: Configuration = {
 
 export const loginRequest: Readonly<{ scopes: readonly string[] }> = {
   /*
-  For demo purpose, we're calling the Microsoft Graph API so we use it's default scope.
-  This will be different depending on the API you want to call.
+    Request only the minimum scopes needed for the demo.
+    User.Read is sufficient for /me and /me/photos endpoints.
+    See: https://learn.microsoft.com/graph/permissions-reference#userread
   */
-  scopes: ['https://graph.microsoft.com/.default'],
+  scopes: ['User.Read'],
 } as const;

@@ -20,13 +20,26 @@ export type AccessTokenContextValue = string | null | undefined;
 
 export const AccessTokenContext = createContext<AccessTokenContextValue>(undefined);
 
+/**
+ * Stores the access token in React context for convenient consumption via useAccessToken().
+ *
+ * Note: Microsoft recommends calling acquireTokenSilent before each API call rather than
+ * storing tokens. This context-based approach trades strict freshness for simplicity.
+ * The refreshTokenExpirationOffsetSeconds (300s) ensures the cached token has at least
+ * 5 minutes of validity, and the event subscription catches background refreshes.
+ * For production apps with frequent API calls, consider calling acquireTokenSilent directly.
+ * See: https://learn.microsoft.com/entra/identity-platform/scenario-spa-acquire-token
+ */
 export function AccessTokenProvider({ children }: { children: ReactNode }) {
   const { instance, inProgress } = useMsal();
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const isAcquiringRef = useRef(false);
   const account = useActiveAccount();
 
-  // Subscribe to MSAL events for more robust token management
+  // Subscribe to MSAL events to catch tokens acquired outside the explicit acquireTokenSilent
+  // call below (e.g., login success from redirect, or token refresh triggered by other components).
+  // On initial load, both this subscription and the acquireTokenSilent .then() may set the same
+  // token -- this is intentional redundancy for robustness.
   useEffect(() => {
     const callbackId = instance.addEventCallback((event: EventMessage) => {
       if (
@@ -97,7 +110,6 @@ export function AccessTokenProvider({ children }: { children: ReactNode }) {
 
     return () => {
       isMounted = false;
-      isAcquiringRef.current = false;
     };
   }, [account, instance, inProgress]);
 

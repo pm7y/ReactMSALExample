@@ -48,7 +48,6 @@ export function LoginButton() {
           } as RedirectRequest);
         } catch (redirectError) {
           console.error('loginRedirect error', redirectError);
-          throw redirectError;
         }
       }}>
       <svg className="size-4" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
